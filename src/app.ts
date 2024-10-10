@@ -1,9 +1,9 @@
 // inportujemy klase
 // const { __express } = require("hbs");
-// const http = require("http");
-import http from "http";
-// const fs = require("fs");
-import fs from "fs";
+const http = require("http");
+// import http from "http";
+const fs = require("fs");
+// import fs from "fs";
 // import Logger from "./logger.js";
 
 type User = {
@@ -26,7 +26,7 @@ const fun = (user: User) => {
 
 // const os = require("os");
 
-const server = http.createServer((req, res) => {
+const server = http.createServer((req: any, res: any) => {
   let path = "./view/";
   switch (req.url) {
     case "/":
@@ -47,7 +47,7 @@ const server = http.createServer((req, res) => {
       res.statusCode = 404;
   }
 
-  fs.readFile(path, (err, data) => {
+  fs.readFile(path, (err: any, data: any) => {
     if (err) {
       console.log(err);
       res.end();
@@ -59,7 +59,7 @@ const server = http.createServer((req, res) => {
     }
   });
 });
-console.log("hej    fdgtedrg");
+console.log("hej 12345657");
 server.listen(3033, () => {
   console.log("listen server 123");
 });
