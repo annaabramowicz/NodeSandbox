@@ -15,7 +15,41 @@ const fun = (user: User) => {
   return user.name;
 };
 
-// const server = http.createServer();
+const server = http.createServer((req: any, res: any) => {
+  console.log("server dziala");
+  let path = "./views";
+
+  switch (req.url) {
+    case "/":
+      path += "/index.html";
+      res.statusCode = 200;
+      break;
+    case "/about":
+      path += "/about.html";
+      res.statusCode = 200;
+      break;
+    case "/about-me":
+      res.statusCode = 301;
+      res.setHeader("Location", "/about");
+      res.end();
+      break;
+    default:
+      path += "/404.html";
+      res.statusCode = 404;
+  }
+
+  fs.readFile(path, (err: any, data: any) => {
+    if (err) {
+      console.log(err);
+      res.end();
+    } else {
+      res.write(data);
+      // res.end(); // jesli bedzie wiele write
+      // przy jednym
+      res.end();
+    }
+  });
+});
 
 // server.on("connection", (socket) => {
 //   console.log("new connection");
@@ -26,41 +60,42 @@ const fun = (user: User) => {
 
 // const os = require("os");
 
-const server = http.createServer((req: any, res: any) => {
-  let path = "./view/";
-  switch (req.url) {
-    case "/":
-      path += "index.html";
-      res.statusCode = 200;
-      break;
-    case "/about":
-      path += "about.html";
-      res.statusCode = 200;
-      break;
-    case "/about-me":
-      res.statusCode = 301;
-      res.setHeader("Location", "/about");
-      res.end();
-      break;
-    default:
-      path += "404.html";
-      res.statusCode = 404;
-  }
+// const server = http.createServer((req: any, res: any) => {
+//   console.log("server dziala");
+//   let path = "./view/";
+//   switch (req.url) {
+//     case "/":
+//       path += "index.html";
+//       res.statusCode = 200;
+//       break;
+//     case "/about":
+//       path += "about.html";
+//       res.statusCode = 200;
+//       break;
+//     case "/about-me":
+//       res.statusCode = 301;
+//       res.setHeader("Location", "/about");
+//       res.end();
+//       break;
+//     default:
+//       path += "404.html";
+//       res.statusCode = 404;
+//   }
 
-  fs.readFile(path, (err: any, data: any) => {
-    if (err) {
-      console.log(err);
-      res.end();
-    } else {
-      // res.write(data);
-      // res.end(); // jesli bedzie wiele write
-      // przy jednym
-      res.end(data);
-    }
-  });
-});
+//   fs.readFile(path, (err: any, data: any) => {
+//     if (err) {
+//       console.log(err);
+//       res.end();
+//     } else {
+//       // res.write(data);
+//       // res.end(); // jesli bedzie wiele write
+//       // przy jednym
+//       res.end(data);
+//     }
+//   });
+// });
 console.log("hej 12345657");
-server.listen(3033, () => {
+server.listen(3030, () => {
   console.log("listen server 123");
 });
 
