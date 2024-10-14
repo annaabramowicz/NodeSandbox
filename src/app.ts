@@ -1,54 +1,46 @@
-import express, {
-  NextFunction,
-  Request,
-  request,
-  Response,
-  response,
-} from "express";
-import path from "path";
+import express from "express";
+import cors from "cors";
+import axios from "axios";
 
 const app = express();
-const PORT = 3100;
+const port = 5000;
 
-const users = [
-  { id: 1, name: "Jonh Doe" },
-  { id: 2, name: "Jane Doe" },
-  { id: 3, name: "Jim Doe" },
-];
-//Logger middleware
-const logger = (request: Request, response: Response, next: NextFunction) => {
-  console.log(`${request.method} ${request.url}`);
-  //next - czyli to jest done -> nastepny middleware
-  next();
-};
+app.use(cors());
+app.use(express.json());
 
-//listen for request
-app.get("/", (request, response) => {
-  console.log(request.url);
-  console.log(request.method);
-  //zamiast
-  // res.write()
-  // res.end()
-  response.sendFile("./index.html", {
-    root: path.join(__dirname, "../views"),
-  });
-});
-app.get("/about", (request, response) => {
-  response.sendFile("./views/about.html", {
-    root: path.join(__dirname, "../views"),
-  });
+const apiUrl = `https://api.spoonacular.com/`;
+
+app.get("/recipes/complexSearch", async (req, res) => {
+  try {
+    if (req.query.query) {
+      const response = await axios.get(
+        `${apiUrl}recipes/complexSearch?query=${req.query.query}&number=15&minFat=0&minProtein=0&minCalories=0&minCarbs=0&apiKey=${process.env.API_KEY}`
+      );
+      res.json(response.data);
+    } else {
+      const response = await axios.get(
+        `${apiUrl}recipes/complexSearch?number=15&minFat=0&minProtein=0&minCalories=0&minCarbs=0&apiKey=${process.env.API_KEY}`
+      );
+      res.json(response.data);
+    }
+  } catch (error) {
+    console.error("Error fetching data from external API", error);
+    res.status(500).json({ message: "Error fetching data" });
+  }
 });
 
-app.get("/about-us", (request, response) => {
-  response.redirect("/about");
-});
-//middleware
-//musi byc na koncu
-//sami musimy ustawic error
-app.use((request, response) => {
-  response.status(400).end(`Invalid url`);
+app.get("/food/ingredients/search", async (req, res) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}food/ingredients/search?query=${req.query.query}&apiKey=${process.env.API_KEY}`
+    );
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error fetching data from external API", error);
+    res.status(500).json({ message: "Error fetching data" });
+  }
 });
 
-app.listen(PORT, () => {
-  console.log(`Running port ${PORT}`);
+app.listen(port, () => {
+  console.log(`Running port ${port}`);
 });
